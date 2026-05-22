@@ -38,14 +38,14 @@ String _safeFileName(String email) {
 
 Future<File> saveAccount(Account account) async {
   final dir = await _accountsDirectory();
-  final filename = _safeFileName(account.email) + '.json';
+  final filename = '${_safeFileName(account.email)}.json';
   final file = File('${dir.path}/$filename');
   return file.writeAsString(jsonEncode(account.toJson()));
 }
 
 Future<Account?> readAccountByEmail(String email) async {
   final dir = await _accountsDirectory();
-  final filename = _safeFileName(email) + '.json';
+  final filename = '${_safeFileName(email)}.json';
   final file = File('${dir.path}/$filename');
   if (!await file.exists()) return null;
   final content = await file.readAsString();

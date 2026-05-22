@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                         gradient: const LinearGradient(
                           colors: [Color(0xFF008b8b), Color(0xFF20b2aa)],
                         ),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4))],
+                        boxShadow: [BoxShadow(color: Colors.black.withAlpha(51), blurRadius: 10, offset: const Offset(0, 4))],
                       ),
                       child: const Icon(Icons.person, size: 60, color: Color(0xFF7fffd4)),
                     ),
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     // Email field
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withAlpha(178),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: TextFormField(
@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                     // Password field
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withAlpha(178),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: TextFormField(
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                     // Forgot password
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withAlpha(128),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -181,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: BoxDecoration(
                         color: const Color(0xFF87ceeb),
                         borderRadius: BorderRadius.circular(25),
-                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))],
+                        boxShadow: [BoxShadow(color: Colors.black.withAlpha(51), blurRadius: 8, offset: const Offset(0, 4))],
                       ),
                       child: TextButton(
                         onPressed: _login,

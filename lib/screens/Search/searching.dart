@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'general_search.dart';
 
 class SearchingScreen extends StatelessWidget {
-  const SearchingScreen({Key? key}) : super(key: key);
+  const SearchingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +31,14 @@ class SearchingScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
-                  children: const [
-                    Icon(Icons.search, color: Colors.grey),
-                    SizedBox(width: 8),
-                    Text(
-                      'Toca para buscar productos, marcas o categorías',
-                      style: TextStyle(color: Colors.grey),
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Toca para buscar productos, marcas o categorías',
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                   ],
                 ),
@@ -84,7 +86,7 @@ class SearchingScreen extends StatelessWidget {
 
 class _RecommendationCard extends StatelessWidget {
   final int index;
-  const _RecommendationCard({Key? key, required this.index}) : super(key: key);
+  const _RecommendationCard({required this.index});
 
   @override
   Widget build(BuildContext context) {

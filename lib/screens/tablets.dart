@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
+import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/widgets/product_banner.dart';
 
 class TabletsPage extends StatelessWidget {
   const TabletsPage({super.key});
 
-  final List<String> _items = const [
-    'SamsungTAB A 10',
-    'Samsung Tab-A9',
-    'SAMSUNG A9+',
+  final List<Map<String, String>> _items = const [
+    {'title': 'SamsungTAB A 10', 'image': kTabletImagePath, 'description': '10" display, almacenamiento 64GB', 'price': 'USD 299'},
+    {'title': 'Samsung Tab-A9', 'image': kTabletImagePath, 'description': 'Buen rendimiento para multimedia', 'price': 'USD 249'},
+    {'title': 'SAMSUNG A9+', 'image': kTabletImagePath, 'description': 'Batería de larga duración', 'price': 'USD 349'},
   ];
 
   @override
@@ -27,12 +29,21 @@ class TabletsPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Spacer(),
+                ],
+              ),
               const SizedBox(height: 16),
               // Title in rounded container
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text('TABLETS', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
@@ -57,7 +68,7 @@ class TabletsPage extends StatelessWidget {
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.3)),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withAlpha((0.3 * 255).toInt())),
                         child: const Icon(Icons.photo_camera, color: Colors.white),
                       ),
                     ],
@@ -70,8 +81,19 @@ class TabletsPage extends StatelessWidget {
                   itemCount: _items.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
-                    final title = _items[index];
-                    return _DeviceRow(title: title, imagePath: kTabletImagePath);
+                    final item = _items[index];
+                    return ProductBanner(
+                      title: item['title'] ?? '',
+                      imagePath: item['image'] ?? kTabletImagePath,
+                      description: item['description'],
+                      price: item['price'],
+                      onBuy: (ctx) {
+                        final cart = CartService();
+                        cart.add(CartItem(title: item['title'] ?? '', description: item['description'] ?? '', price: item['price'] ?? '', image: item['image'] ?? kTabletImagePath));
+                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Añadido al carrito: ${item['title']} - ${item['price']}')));
+                        Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const CartPage()));
+                      },
+                    );
                   },
                 ),
               ),
@@ -83,49 +105,4 @@ class TabletsPage extends StatelessWidget {
   }
 }
 
-class _DeviceRow extends StatelessWidget {
-  final String title;
-  final String imagePath;
-
-  const _DeviceRow({required this.title, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    final maxImageWidth = MediaQuery.of(context).size.width * 0.28;
-    return Container(
-      height: 110,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFf0f8ff), Color(0xFF98d4ff)],
-        ),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxImageWidth),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                width: maxImageWidth,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: maxImageWidth,
-                    height: maxImageWidth * 0.8,
-                    color: Colors.white24,
-                    child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
-        ],
-      ),
-    );
-  }
-}
+// Replaced by shared ProductBanner

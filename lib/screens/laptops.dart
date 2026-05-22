@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
+import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/widgets/product_banner.dart';
 
 class LaptopsPage extends StatelessWidget {
   LaptopsPage({super.key});
 
   final List<Map<String, String>> _items = [
-    {'title': 'SAMSUNG GALAXY BOOK4', 'image': kLaptopImagePath},
-    {'title': 'SAMSUNG GALAXY BOOK 5', 'image': kLaptopImagePath},
-    {'title': 'SAMSUNG GALAXY BOOK5 PRO', 'image': kLaptopImagePath},
+    {'title': 'SAMSUNG GALAXY BOOK4', 'image': kLaptopImagePath, 'description': 'Intel i5, 8GB RAM', 'price': 'USD 899'},
+    {'title': 'SAMSUNG GALAXY BOOK 5', 'image': kLaptopImagePath, 'description': 'Intel i7, 16GB RAM', 'price': 'USD 1199'},
+    {'title': 'SAMSUNG GALAXY BOOK5 PRO', 'image': kLaptopImagePath, 'description': 'GPU dedicada, rendimiento pro', 'price': 'USD 1499'},
   ];
 
   @override
@@ -27,15 +29,24 @@ class LaptopsPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Spacer(),
+                ],
+              ),
               const SizedBox(height: 16),
               // Title in rounded container
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Text('LAPTOPS / PC', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+                child: const Text('LAPTOPS', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
               ),
               const SizedBox(height: 16),
               // Search bar
@@ -57,7 +68,7 @@ class LaptopsPage extends StatelessWidget {
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.3)),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withAlpha((0.3 * 255).toInt())),
                         child: const Icon(Icons.photo_camera, color: Colors.white),
                       ),
                     ],
@@ -71,9 +82,17 @@ class LaptopsPage extends StatelessWidget {
                   separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     final item = _items[index];
-                    return _DeviceRow(
+                    return ProductBanner(
                       title: item['title'] ?? '',
                       imagePath: item['image'] ?? '',
+                      description: item['description'],
+                      price: item['price'],
+                      onBuy: (ctx) {
+                        final cart = CartService();
+                        cart.add(CartItem(title: item['title'] ?? '', description: item['description'] ?? '', price: item['price'] ?? '', image: item['image'] ?? ''));
+                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Añadido al carrito: ${item['title']} - ${item['price']}')));
+                        Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const CartPage()));
+                      },
                     );
                   },
                 ),
@@ -81,53 +100,6 @@ class LaptopsPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _DeviceRow extends StatelessWidget {
-  final String title;
-  final String imagePath;
-
-  const _DeviceRow({required this.title, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    final maxImageWidth = MediaQuery.of(context).size.width * 0.35;
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFeaf6ff), Color(0xFF84c9ff)],
-        ),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxImageWidth),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                width: maxImageWidth,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: maxImageWidth,
-                    height: maxImageWidth * 0.8,
-                    color: Colors.white24,
-                    child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
-        ],
       ),
     );
   }

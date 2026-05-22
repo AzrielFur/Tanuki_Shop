@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
 import 'package:flutter_application_1/app_constants.dart';
+import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/widgets/product_banner.dart';
 
 class ComponentsPage extends StatelessWidget {
   const ComponentsPage({super.key});
 
   final List<Map<String, String>> _items = const [
-    {'title': 'Resistencia SMD', 'image': kLaptopImagePath},
-    {'title': 'Capacitor 10uF', 'image': kLaptopImagePath},
-    {'title': 'IC reparacion', 'image': kLaptopImagePath},
+    {'title': 'Resistencia SMD', 'image': kLaptopImagePath, 'description': 'Resistencias para placas', 'price': 'USD 0.10'},
+    {'title': 'Capacitor 10uF', 'image': kLaptopImagePath, 'description': 'Capacitor electrolítico 10uF', 'price': 'USD 0.20'},
+    {'title': 'IC reparacion', 'image': kLaptopImagePath, 'description': 'ICs comunes para reparación', 'price': 'USD 5'},
   ];
 
   @override
@@ -32,7 +34,7 @@ class ComponentsPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withAlpha(230),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text('REFACCIONES', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
@@ -57,7 +59,7 @@ class ComponentsPage extends StatelessWidget {
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.3)),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withAlpha(77)),
                         child: const Icon(Icons.photo_camera, color: Colors.white),
                       ),
                     ],
@@ -71,7 +73,18 @@ class ComponentsPage extends StatelessWidget {
                   separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     final item = _items[index];
-                    return _DeviceRow(title: item['title'] ?? '', imagePath: item['image'] ?? '');
+                    return ProductBanner(
+                      title: item['title'] ?? '',
+                      imagePath: item['image'] ?? '',
+                      description: item['description'],
+                      price: item['price'],
+                      onBuy: (ctx) {
+                        final cart = CartService();
+                        cart.add(CartItem(title: item['title'] ?? '', description: item['description'] ?? '', price: item['price'] ?? '', image: item['image'] ?? ''));
+                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Añadido al carrito: ${item['title']} - ${item['price']}')));
+                        Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const CartPage()));
+                      },
+                    );
                   },
                 ),
               ),
@@ -82,41 +95,4 @@ class ComponentsPage extends StatelessWidget {
     );
   }
 }
-
-class _DeviceRow extends StatelessWidget {
-  final String title;
-  final String imagePath;
-
-  const _DeviceRow({required this.title, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    final maxImageWidth = MediaQuery.of(context).size.width * 0.28;
-    final isNetwork = imagePath.startsWith('http');
-    return Container(
-      height: 110,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFe6f3ff), Color(0xFF8fc9ff)],
-        ),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxImageWidth),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: isNetwork
-                  ? Image.network(imagePath, width: maxImageWidth, fit: BoxFit.cover, errorBuilder: (c,e,s)=>Container(width: maxImageWidth, height: maxImageWidth*0.8, color: Colors.white24, child: const Icon(Icons.image_not_supported)))
-                  : Image.asset(imagePath, width: maxImageWidth, fit: BoxFit.contain, errorBuilder: (c,e,s)=>Container(width: maxImageWidth, height: maxImageWidth*0.8, color: Colors.white24, child: const Icon(Icons.image_not_supported))),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
-        ],
-      ),
-    );
-  }
-}
+// Replaced by shared ProductBanner

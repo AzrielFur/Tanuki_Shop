@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/all_products.dart';
 
 class GeneralSearchScreen extends StatefulWidget {
-  const GeneralSearchScreen({Key? key}) : super(key: key);
+  const GeneralSearchScreen({super.key});
 
   @override
   State<GeneralSearchScreen> createState() => _GeneralSearchScreenState();
@@ -68,10 +68,10 @@ class _GeneralSearchScreenState extends State<GeneralSearchScreen> {
             // Resultados
             Expanded(
               child: _results.isEmpty
-                  ? const Center(child: Text('Escribe para buscar...'))
-                  : ListView.separated(
+                    ? const Center(child: Text('Escribe para buscar...'))
+                    : ListView.separated(
                       itemCount: _results.length,
-                      separatorBuilder: (_, __) => const Divider(),
+                      separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
                         final item = _results[index];
                         final image = item['image'] ?? '';

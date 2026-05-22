@@ -7,7 +7,8 @@ import 'package:flutter_application_1/screens/tablets.dart';
 import 'package:flutter_application_1/screens/laptops.dart';
 import 'package:flutter_application_1/screens/printers.dart';
 import 'package:flutter_application_1/screens/category/category.dart';
-
+import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/screens/Search/SWC/Camera.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
         '/laptops': (context) => LaptopsPage(),
         '/printers': (context) => const PrintersPage(),
         '/category': (context) => const CategoryPage(),
+        '/cart': (context) => const CartPage(),
+        '/camera': (context) => const CameraPage(),
       },
     );
   }

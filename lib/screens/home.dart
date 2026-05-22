@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
+// 1. IMPORTA AQUÍ TU PÁGINA DE LA CÁMARA
+// (Ajusta la ruta si la tienes guardada dentro de otra carpeta como 'screens/Camera/camera.dart')
+import 'package:flutter_application_1/screens/Search/SWC/Camera.dart'; 
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -39,6 +42,21 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // 2. FUNCIÓN ASÍNCRONA PARA ABRIR LA CÁMARA Y RECIBIR LA RUTA DE LA FOTO
+  Future<void> _openCamera(BuildContext context) async {
+    final String? imagePath = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (context) => const CameraPage()),
+    );
+
+    if (imagePath != null) {
+      // ¡Aquí ya tienes la ruta de la foto tomada!
+      // Puedes mandarla como argumento a la búsqueda general o procesarla.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Foto recibida en Home: $imagePath')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,7 +78,9 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('TANUKI Fix', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Flexible(
+                    child: const Text('TANUKI SHOP', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white), overflow: TextOverflow.ellipsis),
+                  ),
                   Container(
                     width: 45,
                     height: 45,
@@ -76,32 +96,64 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              // Search bar
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GeneralSearchScreen()));
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF20b2aa),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.search, color: Colors.white),
-                      const SizedBox(width: 12),
-                      const Expanded(child: Text('Busca tu dispositivo', style: TextStyle(color: Colors.white))),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.3)),
-                        child: const Icon(Icons.photo_camera, color: Colors.white),
+              
+              // Search bar modificada
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF20b2aa),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Row(
+                  children: [
+                    // Toda el área de texto mantiene la redirección a la búsqueda escrita
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GeneralSearchScreen()));
+                        },
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.search, color: Colors.white),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Busca tu dispositivo', 
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                    
+                    // 3. BOTÓN DE LA CÁMARA AISLADO CON SU PROPIO EVENTO ONTAP
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: InkWell(
+                        onTap: () => _openCamera(context), // Llama a la función de arriba
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle, 
+                            color: Colors.white.withOpacity(0.3), // Corrección recomendada de withAlpha
+                          ),
+                          child: const Icon(Icons.photo_camera, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              
               const SizedBox(height: 24),
               Expanded(
                 child: GridView.count(
@@ -117,7 +169,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Bottom navigation|
+              // Bottom navigation
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.95),
@@ -129,7 +181,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     _navButton(context, Icons.home, 'INICIO', () => Navigator.of(context).pushReplacementNamed('/home'), true),
                     _navButton(context, Icons.shopping_bag, 'FUNDAS', () {}, false),
-                    _navButton(context, Icons.shopping_cart, 'ACCESORIOS', () {}, false),
+                    _navButton(context, Icons.shopping_cart, 'CARRITO', () => Navigator.of(context).pushNamed('/cart'), false),
                     _navButton(context, Icons.grid_view, 'CATEGORIAS', () => Navigator.of(context).pushNamed('/category'), false),
                     _navButton(context, Icons.menu, 'MÁS', () {}, false),
                   ],

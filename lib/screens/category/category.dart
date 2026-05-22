@@ -21,7 +21,7 @@ class CategoryPage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withAlpha(64),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

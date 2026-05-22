@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/app_constants.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
+import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/widgets/product_banner.dart';
 
 class PhonesPage extends StatelessWidget {
   const PhonesPage({super.key});
-
-  final List<String> _phones = const [
-    'Samsung S24 Ultra',
-    'Samsung 25 Ultra',
-    'Samsung S26',
-    'Iphone 15 Pro Max',
+  final List<Map<String, String>> _items = const [
+    {'title': 'Samsung S24 Ultra', 'image': kCellImagePath, 'description': 'Pantalla 6.8", 12GB RAM', 'price': 'USD 1199'},
+    {'title': 'Samsung 25 Ultra', 'image': kCellImagePath, 'description': 'Excelente cámara y batería', 'price': 'USD 999'},
+    {'title': 'Samsung S26', 'image': kCellImagePath, 'description': 'Rendimiento mejorado', 'price': 'USD 899'},
+    {'title': 'Iphone 15 Pro Max', 'image': kCellImagePath, 'description': 'iOS 18, cámara Pro', 'price': 'USD 1299'},
   ];
 
   @override
@@ -28,12 +29,21 @@ class PhonesPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Spacer(),
+                ],
+              ),
               const SizedBox(height: 16),
               // Title in rounded container
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withAlpha((0.9 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text('CELULARES', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
@@ -58,7 +68,7 @@ class PhonesPage extends StatelessWidget {
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.3)),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withAlpha((0.3 * 255).toInt())),
                         child: const Icon(Icons.photo_camera, color: Colors.white),
                       ),
                     ],
@@ -68,11 +78,22 @@ class PhonesPage extends StatelessWidget {
               const SizedBox(height: 16),
               Expanded(
                 child: ListView.separated(
-                  itemCount: _phones.length,
+                  itemCount: _items.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
-                    final title = _phones[index];
-                    return _DeviceRow(title: title, imagePath: kCellImagePath);
+                    final item = _items[index];
+                    return ProductBanner(
+                      title: item['title'] ?? '',
+                      imagePath: item['image'] ?? kCellImagePath,
+                      description: item['description'],
+                      price: item['price'],
+                      onBuy: (ctx) {
+                        final cart = CartService();
+                        cart.add(CartItem(title: item['title'] ?? '', description: item['description'] ?? '', price: item['price'] ?? '', image: item['image'] ?? kCellImagePath));
+                        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text('Añadido al carrito: ${item['title']} - ${item['price']}')));
+                        Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const CartPage()));
+                      },
+                    );
                   },
                 ),
               ),
@@ -84,49 +105,4 @@ class PhonesPage extends StatelessWidget {
   }
 }
 
-class _DeviceRow extends StatelessWidget {
-  final String title;
-  final String imagePath;
-
-  const _DeviceRow({required this.title, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    final maxImageWidth = MediaQuery.of(context).size.width * 0.28;
-    return Container(
-      height: 110,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFe6f3ff), Color(0xFF8fc9ff)],
-        ),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxImageWidth),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                width: maxImageWidth,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: maxImageWidth,
-                    height: maxImageWidth * 0.8,
-                    color: Colors.white24,
-                    child: const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
-        ],
-      ),
-    );
-  }
-}
+// Replaced by shared ProductBanner widget
