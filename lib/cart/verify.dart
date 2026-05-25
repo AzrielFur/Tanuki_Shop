@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/cart/cart.dart';
+import 'package:flutter_application_1/cart/DBU/d_bank.dart';
 
 class VerifyPage extends StatefulWidget {
 	const VerifyPage({super.key});
@@ -172,41 +173,80 @@ class _VerifyPageState extends State<VerifyPage> {
 								),
 							),
 							const SizedBox(height: 12),
+
+							// ==================== NUEVA SECCIÓN DE TOTAL Y PAGO ====================
 							Container(
-								padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-								decoration: BoxDecoration(color: Colors.white.withAlpha((0.95 * 255).toInt()), borderRadius: BorderRadius.circular(12)),
-								child: Row(
+								padding: const EdgeInsets.all(20),
+								decoration: BoxDecoration(
+									color: Colors.white.withAlpha((0.95 * 255).toInt()),
+									borderRadius: BorderRadius.circular(20),
+								),
+								child: Column(
 									children: [
-										Expanded(child: Text('Total: USD ${_total.toStringAsFixed(2)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-										ElevatedButton(
-											style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF20b2aa)),
-											onPressed: () => Navigator.of(context).pop(),
-											child: const Text('Volver'),
-										),
-										const SizedBox(width: 8),
-										ElevatedButton(
-											style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
-											onPressed: () {
-												// Acción simple: vaciar carrito
-												showDialog(
-													context: context,
-													builder: (ctx) => AlertDialog(
-														title: const Text('Vaciar carrito'),
-														content: const Text('¿Deseas eliminar todos los productos del carrito?'),
-														actions: [
-															TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancelar')),
-															TextButton(
-																onPressed: () {
-																	_cart.clear();
-																	Navigator.of(ctx).pop();
-																},
-																child: const Text('Eliminar'),
-															),
-														],
+										Row(
+											mainAxisAlignment: MainAxisAlignment.spaceBetween,
+											children: [
+												const Text('Total a pagar:', style: TextStyle(fontSize: 18)),
+												Text(
+													'USD ${_total.toStringAsFixed(2)}',
+													style: const TextStyle(
+														fontSize: 26,
+														fontWeight: FontWeight.bold,
+														color: Color(0xFF008fee),
 													),
-												);
-											},
-											child: const Text('Eliminar todo'),
+												),
+											],
+										),
+										const SizedBox(height: 24),
+
+										Row(
+											children: [
+												Expanded(
+													child: OutlinedButton(
+														style: OutlinedButton.styleFrom(
+															padding: const EdgeInsets.symmetric(vertical: 16),
+														),
+														onPressed: () => Navigator.pop(context),
+														child: const Text('Volver', style: TextStyle(fontSize: 16)),
+													),
+												),
+												const SizedBox(width: 12),
+												Expanded(
+													flex: 2,
+													child: ElevatedButton(
+														style: ElevatedButton.styleFrom(
+															backgroundColor: const Color(0xFF008fee),
+															padding: const EdgeInsets.symmetric(vertical: 16),
+															shape: RoundedRectangleBorder(
+																borderRadius: BorderRadius.circular(12),
+															),
+														),
+														onPressed: () {
+															if (_cart.items.isEmpty) {
+																ScaffoldMessenger.of(context).showSnackBar(
+																	const SnackBar(content: Text('El carrito está vacío')),
+																);
+																return;
+															}
+
+															Navigator.push(
+																context,
+																MaterialPageRoute(
+																	builder: (context) => DBankPage(
+																		cartItems: List.from(_cart.items),
+																		quantities: Map.from(_quantities),
+																		total: _total,
+																	),
+																),
+															);
+														},
+														child: const Text(
+															'PROCEDER AL PAGO',
+															style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+														),
+													),
+												),
+											],
 										),
 									],
 								),
@@ -219,4 +259,3 @@ class _VerifyPageState extends State<VerifyPage> {
 		);
 	}
 }
-

@@ -4,6 +4,7 @@ import 'package:flutter_application_1/screens/category/adapters.dart';
 import 'package:flutter_application_1/screens/category/components.dart';
 import 'package:flutter_application_1/screens/category/matery.dart';
 import 'package:flutter_application_1/screens/category/machines.dart';
+import 'package:flutter_application_1/widgets/custom_back_button.dart'; // ← Importante
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
@@ -52,36 +53,48 @@ class CategoryPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Categorías')),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFdff4ff), Color(0xFF0ea5e9)],
+            colors: [Color(0xFF0f1720), Color(0xFF1e2937), Color(0xFF334155)],
           ),
         ),
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 48),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                final name = items[index];
-                Widget? page;
-                if (name == 'CARGADORES / CABLES') page = const ChargersPage();
-                if (name == 'ADAPTADORES') page = const AdaptersPage();
-                if (name == 'REFACCIONES') page = const ComponentsPage();
-                if (name == 'MATERIALES DE REPARACION') page = const MateryPage();
-                if (name == 'MAQUINAS DE REPARACION') page = const MachinesPage();
+        child: Column(
+          children: [
+            // Botón negro de retroceso + Título
+            const CustomBackButton(title: 'CATEGORÍAS'),
 
-                if (page != null) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => page!));
-                }
-              },
-              child: _pill(items[index]),
-            );
-          },
+            // Contenido principal
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(top: 20, bottom: 40, left: 8, right: 8),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      final name = items[index];
+                      Widget? page;
+
+                      if (name == 'CARGADORES / CABLES') page = const ChargersPage();
+                      if (name == 'ADAPTADORES') page = const AdaptersPage();
+                      if (name == 'REFACCIONES') page = const ComponentsPage();
+                      if (name == 'MATERIALES DE REPARACION') page = const MateryPage();
+                      if (name == 'MAQUINAS DE REPARACION') page = const MachinesPage();
+
+                      if (page != null) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => page!),
+                        );
+                      }
+                    },
+                    child: _pill(items[index]),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

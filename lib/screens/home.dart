@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/Search/general_search.dart';
-// 1. IMPORTA AQUÍ TU PÁGINA DE LA CÁMARA
-// (Ajusta la ruta si la tienes guardada dentro de otra carpeta como 'screens/Camera/camera.dart')
 import 'package:flutter_application_1/screens/Search/SWC/Camera.dart'; 
+import 'package:flutter_application_1/screens/more/more.dart';   // ← Importante
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -42,15 +41,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 2. FUNCIÓN ASÍNCRONA PARA ABRIR LA CÁMARA Y RECIBIR LA RUTA DE LA FOTO
   Future<void> _openCamera(BuildContext context) async {
     final String? imagePath = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (context) => const CameraPage()),
     );
 
     if (imagePath != null) {
-      // ¡Aquí ya tienes la ruta de la foto tomada!
-      // Puedes mandarla como argumento a la búsqueda general o procesarla.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Foto recibida en Home: $imagePath')),
       );
@@ -79,7 +75,11 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                    child: const Text('TANUKI SHOP', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white), overflow: TextOverflow.ellipsis),
+                    child: const Text(
+                      'TANUKI SHOP',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Container(
                     width: 45,
@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               
-              // Search bar modificada
+              // Search bar
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF20b2aa),
@@ -105,11 +105,12 @@ class HomePage extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Toda el área de texto mantiene la redirección a la búsqueda escrita
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GeneralSearchScreen()));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const GeneralSearchScreen()),
+                          );
                         },
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(25),
@@ -133,18 +134,17 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     
-                    // 3. BOTÓN DE LA CÁMARA AISLADO CON SU PROPIO EVENTO ONTAP
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: InkWell(
-                        onTap: () => _openCamera(context), // Llama a la función de arriba
+                        onTap: () => _openCamera(context),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle, 
-                            color: Colors.white.withOpacity(0.3), // Corrección recomendada de withAlpha
+                            color: Colors.white.withOpacity(0.3),
                           ),
                           child: const Icon(Icons.photo_camera, color: Colors.white),
                         ),
@@ -169,7 +169,8 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Bottom navigation
+              
+              // ==================== BOTTOM NAVIGATION ====================
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.95),
@@ -183,7 +184,11 @@ class HomePage extends StatelessWidget {
                     _navButton(context, Icons.shopping_bag, 'FUNDAS', () {}, false),
                     _navButton(context, Icons.shopping_cart, 'CARRITO', () => Navigator.of(context).pushNamed('/cart'), false),
                     _navButton(context, Icons.grid_view, 'CATEGORIAS', () => Navigator.of(context).pushNamed('/category'), false),
-                    _navButton(context, Icons.menu, 'MÁS', () {}, false),
+                    _navButton(context, Icons.menu, 'MÁS', () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const MorePage()),
+                      );
+                    }, false),
                   ],
                 ),
               ),
@@ -208,7 +213,13 @@ class HomePage extends StatelessWidget {
             ),
             child: Icon(icon, color: isActive ? Colors.white : Colors.black54, size: 24),
           ),
-          Text(label, style: TextStyle(fontSize: 10, color: isActive ? const Color(0xFF0066cc) : Colors.black54)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: isActive ? const Color(0xFF0066cc) : Colors.black54,
+            ),
+          ),
         ],
       ),
     );
